@@ -1,0 +1,17 @@
+name: Build and test
+on: [push, pull_request]
+jobs:
+  macos:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Protocol tests
+        run: ./scripts/test.sh
+      - name: Build app bundle
+        run: ./scripts/build-app.sh
+      - name: Package app preserving executable permissions
+        run: ditto -c -k --sequesterRsrc --keepParent dist/JC2Mac.app dist/JC2Mac.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: JC2Mac
+          path: dist/JC2Mac.zip
